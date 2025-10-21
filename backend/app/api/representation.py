@@ -2,9 +2,8 @@ from fastapi import APIRouter, Depends, Header
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config.client import get_math_client
+from app.config.client import get_math_client, get_plc_client
 from app.config.logger import logger
-from app.config.settings import settings
 
 from app.config.db import get_async_session
 
@@ -20,7 +19,8 @@ router = APIRouter()
 async def get_number_in_math_model(
         number: int = Header(...),
         session: AsyncSession = Depends(get_async_session),
-        math_client = Depends(get_math_client)
+        math_client=Depends(get_math_client),
+        plc_client=Depends(get_plc_client)
 ):
     try:
         logger.info("Вызван эндпоинт get_number_in_math_model")
@@ -47,12 +47,14 @@ async def get_number_in_math_model(
             created_at=model_answer.created_at
         )
 
+        result = await plc_client.post("/command_in_backend", headers={"number": str(answer)})
+        answer = result.json()
+
         return {
             "message": "Число успешно сохранено в БД",
-            "record_id": model_answer.id,
-            "number": model_answer.number,
             "model_answer": model_answer.model_answer,
-            "created_at": model_answer.created_at.isoformat()
+            "plc_answer": answer
+
         }
 
     except Exception as e:

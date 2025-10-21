@@ -17,6 +17,7 @@ class Settings(BaseSettings):
 
     database_url: str = f"{DB_CONNECTOR}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
     base_url_math_model: str = "http://math_model:8002"
+    base_url_plc_model: str = "http://plc_service:8003"
 
     class Config:
         extra = "allow"
