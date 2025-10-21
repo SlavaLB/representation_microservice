@@ -1,13 +1,11 @@
 from fastapi import APIRouter, Depends, Header
 
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config.client import get_math_client, get_plc_client
 from app.config.logger import logger
 
-from app.config.db import get_async_session
+from app.config.depends import  get_model_answer_db_service
 
-from app.models import ModelAnswer
+from app.services import MathService, PLCService
 
 router = APIRouter()
 
@@ -18,26 +16,21 @@ router = APIRouter()
 )
 async def get_number_in_math_model(
         number: int = Header(...),
-        session: AsyncSession = Depends(get_async_session),
-        math_client=Depends(get_math_client),
-        plc_client=Depends(get_plc_client)
+        math_services=Depends(MathService),
+        plc_services=Depends(PLCService),
+        model_answer_db_service=Depends(get_model_answer_db_service)
 ):
     try:
         logger.info("Вызван эндпоинт get_number_in_math_model")
 
-        result = await math_client.post("/number_in_math_model", headers={"number": str(number)})
-        answer = result.json()
-        logger.info(f"Ответ от эндпоинта модели number_in_math_model: {answer}")
+        answer_in_model = await math_services.send_number(number)
+        logger.info(f"Ответ от эндпоинта модели number_in_math_model: {answer_in_model}")
 
         # Создаем новую запись в БД
-        model_answer = ModelAnswer(
+        model_answer = await model_answer_db_service.save_answer(
             number=number,
-            model_answer=answer
+            model_answer=answer_in_model
         )
-
-        session.add(model_answer)
-        await session.commit()
-        await session.refresh(model_answer)
 
         logger.info(
             "Создана запись в БД",
@@ -47,13 +40,13 @@ async def get_number_in_math_model(
             created_at=model_answer.created_at
         )
 
-        result = await plc_client.post("/command_in_backend", headers={"number": str(answer)})
-        answer = result.json()
+        command_in_plc = await plc_services.send_command(number)
 
+        logger.info(f"Команда:{number} была отправлена и {command_in_plc}")
         return {
             "message": "Число успешно сохранено в БД",
             "model_answer": model_answer.model_answer,
-            "plc_answer": answer
+            "plc_answer": command_in_plc
 
         }
 
