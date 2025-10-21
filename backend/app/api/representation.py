@@ -9,7 +9,7 @@ from app.config.db import get_async_session
 
 from app.models import ModelAnswer
 
-router = APIRouter(prefix='/representation')
+router = APIRouter()
 
 
 @router.post(

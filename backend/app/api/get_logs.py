@@ -4,7 +4,7 @@ from app.config.logger import log_parser
 from fastapi.responses import JSONResponse
 
 
-router = APIRouter(prefix='/api')
+router = APIRouter()
 
 
 @router.get("/logs")
