@@ -1,5 +1,7 @@
 .idea
 backend/venv
+PLCservice/venv
+math_model/venv
 /venv
 .git
 .env
