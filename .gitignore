@@ -1,4 +1,5 @@
 .idea
+backend/venv
 /venv
 .git
 .env
