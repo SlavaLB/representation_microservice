@@ -1,10 +1,7 @@
 from fastapi import APIRouter, Depends, Header
 
-
+from app.config.depends import get_model_answer_db_service
 from app.config.logger import logger
-
-from app.config.depends import  get_model_answer_db_service
-
 from app.services import MathService, PLCService
 
 router = APIRouter()

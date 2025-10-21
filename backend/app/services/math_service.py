@@ -1,4 +1,5 @@
 from fastapi import Depends
+
 from app.config.depends import get_math_client
 
 

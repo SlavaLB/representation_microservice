@@ -1,8 +1,7 @@
 from fastapi import APIRouter, HTTPException
-
-from app.config.logger import log_parser
 from fastapi.responses import JSONResponse
 
+from app.config.logger import log_parser
 
 router = APIRouter()
 

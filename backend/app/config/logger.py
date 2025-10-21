@@ -1,9 +1,9 @@
+import json
 import logging
 import logging.handlers
 import re
 from datetime import datetime
 from pathlib import Path
-import json
 from typing import Dict, List
 
 

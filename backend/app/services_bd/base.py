@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Type, TypeVar
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 

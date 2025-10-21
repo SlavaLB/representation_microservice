@@ -1,10 +1,9 @@
 import httpx
 from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.db import AsyncSessionLocal
 from app.config.settings import settings
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.services_bd.model_answer_service import ModelAnswerService
 
 

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api import representation_router, logs_router
+from app.api import logs_router, representation_router
 
 app = FastAPI(
     root_path="/api",
