@@ -2,6 +2,10 @@
 backend/venv
 PLCservice/venv
 math_model/venv
+backend/logs
+PLCservice/logs
+math_model/logs
 /venv
 .git
 .env
+
