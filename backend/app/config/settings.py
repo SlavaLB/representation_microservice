@@ -1,9 +1,21 @@
+import os
+
+from dotenv import load_dotenv
+
 from pydantic_settings import BaseSettings
+
+load_dotenv()
+
+DB_CONNECTOR = os.environ.get("DB_CONNECTOR")
+DB_USER = os.environ.get("DB_USER")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+DB_HOST = os.environ.get("DB_HOST")
+DB_NAME = os.environ.get("DB_NAME")
 
 
 class Settings(BaseSettings):
 
-    # database_url: str = "postgresql+asyncpg://user:password@db:5432/mydatabase"
+    database_url: str = f"{DB_CONNECTOR}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 
     class Config:
         extra = "allow"

@@ -3,6 +3,8 @@ from fastapi import APIRouter, Depends, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.logger import logger
+from app.config.settings import settings
+
 # from app.config.db import get_async_session
 
 
@@ -19,7 +21,7 @@ async def get_number_in_math_model(
 ):
     try:
         logger.info("Вызван эндпоинт get_number_in_math_model")
-
+        print(settings.database_url)
         return {"message": "Запись о трудозатратах успешно удалена"}
 
     except Exception as e:
