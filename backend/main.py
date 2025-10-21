@@ -6,12 +6,12 @@ app = FastAPI(root_path="/api")
 
 app.include_router(
     representation_router,
-    prefix="/api/representation",
+    prefix="/representation",
     tags=["Representation"]
 )
 
 app.include_router(
     logs_router,
-    prefix="/api/logs",
+    prefix="/logs",
     tags=["Logs"]
 )

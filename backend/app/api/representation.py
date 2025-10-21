@@ -24,7 +24,10 @@ async def get_number_in_math_model(
         logger.info("Вызван эндпоинт get_number_in_math_model")
 
         # Создаем новую запись в БД
-        model_answer = ModelAnswer(number=number)
+        model_answer = ModelAnswer(
+            number=number,
+            model_answer=number
+        )
 
         # Добавляем в сессию
         session.add(model_answer)
@@ -50,9 +53,6 @@ async def get_number_in_math_model(
         }
 
     except Exception as e:
-        logger.error(
-            "Ошибка get_number_in_math_model: %s", repr(e),
-        )
         return {
             'message': 'Ошибка get_number_in_math_model',
             'detail': str(e)
