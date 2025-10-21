@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Header
-router = APIRouter(prefix='/math_model')
+router = APIRouter()
 
 
 @router.post(

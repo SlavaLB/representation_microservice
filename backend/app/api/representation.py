@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Header
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config.client import get_math_client
 from app.config.logger import logger
 from app.config.settings import settings
 
@@ -18,30 +19,31 @@ router = APIRouter()
 )
 async def get_number_in_math_model(
         number: int = Header(...),
-        session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session),
+        math_client = Depends(get_math_client)
 ):
     try:
         logger.info("Вызван эндпоинт get_number_in_math_model")
 
+        result = await math_client.post("/number_in_math_model", headers={"number": str(number)})
+        answer = result.json()
+        logger.info(f"Ответ от эндпоинта модели number_in_math_model: {answer}")
+
         # Создаем новую запись в БД
         model_answer = ModelAnswer(
             number=number,
-            model_answer=number
+            model_answer=answer
         )
 
-        # Добавляем в сессию
         session.add(model_answer)
-
-        # Сохраняем в БД
         await session.commit()
-
-        # Обновляем объект чтобы получить ID и created_at
         await session.refresh(model_answer)
 
         logger.info(
             "Создана запись в БД",
             record_id=model_answer.id,
             number=model_answer.number,
+            model_answer=model_answer.model_answer,
             created_at=model_answer.created_at
         )
 
@@ -49,6 +51,7 @@ async def get_number_in_math_model(
             "message": "Число успешно сохранено в БД",
             "record_id": model_answer.id,
             "number": model_answer.number,
+            "model_answer": model_answer.model_answer,
             "created_at": model_answer.created_at.isoformat()
         }
 

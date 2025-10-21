@@ -6,3 +6,4 @@ asyncpg==0.30.0
 uvicorn==0.33.0
 pydantic-settings==2.8.1
 asyncmy==0.2.10
+httpx
