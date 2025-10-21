@@ -26,3 +26,4 @@ docker compose up --build
 
 * [Документация Backend](http://localhost/api/docs)
 * [Документация Math model](http://localhost/math/docs)
+* [Документация PLC service](http://localhost/plc/docs)

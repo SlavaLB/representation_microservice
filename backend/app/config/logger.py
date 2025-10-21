@@ -41,7 +41,7 @@ class ProjectLogger:
         handler.setFormatter(formatter)
 
         def level_filter(record):
-            return record.levelno >= level
+            return record.levelno == level
 
         handler.addFilter(level_filter)
 
