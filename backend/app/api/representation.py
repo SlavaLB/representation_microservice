@@ -5,8 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config.logger import logger
 from app.config.settings import settings
 
-# from app.config.db import get_async_session
+from app.config.db import get_async_session
 
+from app.models import ModelAnswer
 
 router = APIRouter(prefix='/representation')
 
@@ -17,12 +18,36 @@ router = APIRouter(prefix='/representation')
 )
 async def get_number_in_math_model(
         number: int = Header(...),
-        # session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session)
 ):
     try:
         logger.info("Вызван эндпоинт get_number_in_math_model")
-        print(settings.database_url)
-        return {"message": "Запись о трудозатратах успешно удалена"}
+
+        # Создаем новую запись в БД
+        model_answer = ModelAnswer(number=number)
+
+        # Добавляем в сессию
+        session.add(model_answer)
+
+        # Сохраняем в БД
+        await session.commit()
+
+        # Обновляем объект чтобы получить ID и created_at
+        await session.refresh(model_answer)
+
+        logger.info(
+            "Создана запись в БД",
+            record_id=model_answer.id,
+            number=model_answer.number,
+            created_at=model_answer.created_at
+        )
+
+        return {
+            "message": "Число успешно сохранено в БД",
+            "record_id": model_answer.id,
+            "number": model_answer.number,
+            "created_at": model_answer.created_at.isoformat()
+        }
 
     except Exception as e:
         logger.error(
