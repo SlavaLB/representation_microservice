@@ -13,7 +13,7 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 900px;
         }
 
         h1 {
@@ -52,6 +52,18 @@
         #sendBtn {
             width: 100%;
         }
+
+        table th, table td {
+            vertical-align: middle;
+            font-size: .9rem;
+        }
+
+        .controls {
+            display:flex;
+            gap:10px;
+            align-items:flex-end;
+            margin-bottom:15px;
+        }
     </style>
 </head>
 <body>
@@ -63,7 +75,7 @@
         <label for="numberInput" class="form-label">Введите число:</label>
         <input type="number" class="form-control" id="numberInput" placeholder="Например, 4">
     </div>
-    <button id="sendBtn" class="btn btn-primary">Отправить</button>
+    <button id="sendBtn" class="btn btn-primary mb-3">Отправить</button>
 
     <div class="response-card mt-4" id="mathCard">
         <h5>Math Model:</h5>
@@ -74,6 +86,34 @@
         <h5>PLC:</h5>
         <div class="result-value" id="plcResult">–</div>
     </div>
+</div>
+
+<div class="container mt-4">
+  <div class="controls">
+    <div style="flex:1">
+      <label for="limitInput" class="form-label">Введите limit:</label>
+      <input type="number" class="form-control" id="limitInput" placeholder="Например, 1000">
+    </div>
+    <div>
+      <button id="logsBtn" class="btn btn-secondary">Логи</button>
+    </div>
+  </div>
+
+  <table class="table table-sm table-striped" id="logsTable">
+    <thead class="table-dark">
+      <tr>
+        <th>Время</th>
+        <th>Название</th>
+        <th>Уровень</th>
+        <th>Файл</th>
+        <th>Линия</th>
+        <th>Сообщение</th>
+        <th>Extra</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
 </div>
 
 <script>
@@ -102,24 +142,106 @@
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',
-                    'number': number
-                }
+                    'Content-Type': 'application/json',
+                    'number': number,
+                },
             });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
             const data = await response.json();
 
-            // Обновляем блоки
-            mathResult.textContent = data.model_answer;
-            plcResult.textContent = data.plc_answer;
+            mathResult.textContent = data.model_answer ?? '–';
+            plcResult.textContent = data.plc_answer ?? '–';
 
             mathCard.classList.add('show');
             plcCard.classList.add('show');
 
         } catch (err) {
+            console.error(err);
             mathResult.textContent = "Ошибка!";
             plcResult.textContent = "Ошибка!";
             mathCard.classList.add('show');
             plcCard.classList.add('show');
         }
+    });
+
+    const logsBtn = document.getElementById('logsBtn');
+
+    logsBtn?.addEventListener('click', async () => {
+      const limitInput = document.getElementById('limitInput');
+      const limit = Number(limitInput?.value) || 10;
+
+      const url = `http://localhost/api/logs/logs?limit=${encodeURIComponent(limit)}`;
+
+      try {
+        const response = await fetch(url, { method: 'GET', headers: { 'accept': 'application/json' } });
+        if (!response.ok) throw new Error('Network response was not ok');
+        const logs = await response.json();
+
+        const tbody = document.querySelector('#logsTable tbody');
+        tbody.innerHTML = '';
+
+        const info = logs?.info
+
+        if(!Array.isArray(info)) return;
+        info.forEach(log => {
+          const tr = document.createElement('tr');
+
+          const tdTimestamp = document.createElement('td');
+          tdTimestamp.textContent = log.timestamp || '-';
+          tr.appendChild(tdTimestamp);
+
+          const tdName = document.createElement('td');
+          tdName.textContent = log.name || '-';
+          tr.appendChild(tdName);
+
+          const tdLevel = document.createElement('td');
+          tdLevel.textContent = log.level || '-';
+          tr.appendChild(tdLevel);
+
+          const tdFile = document.createElement('td');
+          tdFile.textContent = log.file || '-';
+          tr.appendChild(tdFile);
+
+          const tdLine = document.createElement('td');
+          tdLine.textContent = log.line || '-';
+          tr.appendChild(tdLine);
+
+          const tdMessage = document.createElement('td');
+          tdMessage.textContent = log.message || '-';
+          tr.appendChild(tdMessage);
+
+          const tdExtra = document.createElement('td');
+          try {
+            if (log.extra === null || log.extra === undefined) {
+              tdExtra.textContent = '-';
+            } else if (typeof log.extra === 'string') {
+              try {
+                const parsed = JSON.parse(log.extra);
+                tdExtra.textContent = JSON.stringify(parsed);
+                tdExtra.title = JSON.stringify(parsed, null, 2);
+              } catch (e) {
+                tdExtra.textContent = log.extra;
+              }
+            } else {
+              tdExtra.textContent = JSON.stringify(log.extra);
+              tdExtra.title = JSON.stringify(log.extra, null, 2);
+            }
+          } catch (e) {
+            tdExtra.textContent = String(log.extra);
+          }
+          tr.appendChild(tdExtra);
+
+          tbody.appendChild(tr);
+        });
+
+      } catch (err) {
+        console.error('Ошибка при получении логов:', err);
+        alert('Не удалось получить логи (смотрите консоль).');
+      }
     });
 </script>
 
