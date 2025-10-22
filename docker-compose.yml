@@ -20,6 +20,7 @@ services:
       - "8001:8001"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    command: sh -c "alembic upgrade head"
 
   math_model:
     build: ./math_model
