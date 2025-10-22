@@ -1,91 +1,123 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math & PLC Interface</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: #f0f2f5;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 50px 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math & PLC Interface</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body {
+  background: #f0f2f5;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 50px 0;
+}
 
-        .container {
-            max-width: 900px;
-        }
+.container {
+  max-width: 900px;
+}
 
-        h1 {
-            text-align: center;
-            margin-bottom: 40px;
-            font-weight: 600;
-        }
+h1 {
+  text-align: center;
+  margin-bottom: 40px;
+  font-weight: 600;
+}
 
-        .response-card {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 12px;
-            background: #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.4s ease-in-out;
-        }
+.response-card {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.4s ease-in-out;
+}
 
-        .response-card.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
+.response-card.show {
+  opacity: 1;
+  transform: translateY(0);
+}
 
-        .response-card h5 {
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
+.response-card h5 {
+  margin-bottom: 10px;
+  font-weight: 500;
+}
 
-        .result-value {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #0d6efd;
-        }
+.result-value {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #0d6efd;
+}
 
-        #sendBtn {
-            width: 100%;
-        }
+#sendBtn {
+  width: 100%;
+}
 
-        table th, table td {
-            vertical-align: middle;
-            font-size: .9rem;
-        }
+table th, table td {
+  vertical-align: middle;
+  font-size: .9rem;
+}
 
-        .controls {
-            display:flex;
-            gap:10px;
-            align-items:flex-end;
-            margin-bottom:15px;
-        }
-    </style>
+.controls {
+  display:flex;
+  gap:10px;
+  align-items:flex-end;
+  margin-bottom:15px;
+}
+
+.extra-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: .85rem;
+}
+.extra-table td {
+  padding: 4px 6px;
+  border: 1px solid #e9ecef;
+}
+.extra-key {
+  font-weight: 600;
+  width: 35%;
+  background: #fafbfc;
+}
+.extra-value {
+  word-break: break-word;
+}
+.extra-badge {
+  display:inline-block;
+  padding: .15rem .4rem;
+  font-size:.75rem;
+  border-radius:.35rem;
+  background:#f1f5ff;
+  color:#0d6efd;
+  margin-right:6px;
+  margin-bottom:4px;
+}
+.small-muted {
+  font-size:.8rem;
+  color:#6c757d;
+}
+</style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Math Model & PLC</h1>
+  <h1>Math Model & PLC</h1>
 
-    <div class="mb-3">
-        <label for="numberInput" class="form-label">Введите число:</label>
-        <input type="number" class="form-control" id="numberInput" placeholder="Например, 4">
-    </div>
-    <button id="sendBtn" class="btn btn-primary mb-3">Отправить</button>
+  <div class="mb-3">
+    <label for="numberInput" class="form-label">Введите число:</label>
+    <input type="number" class="form-control" id="numberInput" placeholder="Например, 4">
+  </div>
+  <button id="sendBtn" class="btn btn-primary mb-3">Отправить</button>
 
-    <div class="response-card mt-4" id="mathCard">
-        <h5>Math Model:</h5>
-        <div class="result-value" id="mathResult">–</div>
-    </div>
+  <div class="response-card mt-4" id="mathCard">
+    <h5>Math Model:</h5>
+    <div class="result-value" id="mathResult">–</div>
+  </div>
 
-    <div class="response-card mt-3" id="plcCard">
-        <h5>PLC:</h5>
-        <div class="result-value" id="plcResult">–</div>
-    </div>
+  <div class="response-card mt-3" id="plcCard">
+    <h5>PLC:</h5>
+    <div class="result-value" id="plcResult">–</div>
+  </div>
 </div>
 
 <div class="container mt-4">
@@ -117,132 +149,171 @@
 </div>
 
 <script>
-    const sendBtn = document.getElementById('sendBtn');
-    const numberInput = document.getElementById('numberInput');
-    const mathCard = document.getElementById('mathCard');
-    const plcCard = document.getElementById('plcCard');
-    const mathResult = document.getElementById('mathResult');
-    const plcResult = document.getElementById('plcResult');
+const sendBtn = document.getElementById('sendBtn');
+const numberInput = document.getElementById('numberInput');
+const mathCard = document.getElementById('mathCard');
+const plcCard = document.getElementById('plcCard');
+const mathResult = document.getElementById('mathResult');
+const plcResult = document.getElementById('plcResult');
 
-    sendBtn.addEventListener('click', async () => {
-        const number = numberInput.value;
-        if (!number) {
-            alert('Введите число!');
-            return;
-        }
+sendBtn.addEventListener('click', async () => {
+  const number = numberInput.value;
+  if (!number) {
+    alert('Введите число!');
+    return;
+  }
 
-        mathResult.textContent = "…";
-        plcResult.textContent = "…";
+  mathResult.textContent = "…";
+  plcResult.textContent = "…";
 
-        mathCard.classList.remove('show');
-        plcCard.classList.remove('show');
+  mathCard.classList.remove('show');
+  plcCard.classList.remove('show');
 
-        try {
-            const response = await fetch('http://localhost/api/representation/get_number_in_math_model', {
-                method: 'POST',
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'number': number,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-
-            mathResult.textContent = data.model_answer ?? '–';
-            plcResult.textContent = data.plc_answer ?? '–';
-
-            mathCard.classList.add('show');
-            plcCard.classList.add('show');
-
-        } catch (err) {
-            console.error(err);
-            mathResult.textContent = "Ошибка!";
-            plcResult.textContent = "Ошибка!";
-            mathCard.classList.add('show');
-            plcCard.classList.add('show');
-        }
+  try {
+    const response = await fetch('http://localhost/api/representation/get_number_in_math_model', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'number': number,
+      },
     });
 
-    const logsBtn = document.getElementById('logsBtn');
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
 
-    logsBtn?.addEventListener('click', async () => {
-      const limitInput = document.getElementById('limitInput');
-      const limit = Number(limitInput?.value) || 10;
+    const data = await response.json();
 
-      const url = `http://localhost/api/logs/logs?limit=${encodeURIComponent(limit)}`;
+    mathResult.textContent = data.model_answer ?? '–';
+    plcResult.textContent = data.plc_answer ?? '–';
 
-      try {
-        const response = await fetch(url, { method: 'GET', headers: { 'accept': 'application/json' } });
-        if (!response.ok) throw new Error('Network response was not ok');
-        const logs = await response.json();
+    mathCard.classList.add('show');
+    plcCard.classList.add('show');
 
-        const tbody = document.querySelector('#logsTable tbody');
-        tbody.innerHTML = '';
+  } catch (err) {
+    console.error(err);
+    mathResult.textContent = "Ошибка!";
+    plcResult.textContent = "Ошибка!";
+    mathCard.classList.add('show');
+    plcCard.classList.add('show');
+  }
+});
 
-        const info = logs?.info
+const logsBtn = document.getElementById('logsBtn');
 
-        if(!Array.isArray(info)) return;
-        info.forEach(log => {
-          const tr = document.createElement('tr');
+function removeMillis(ts) {
+  if (!ts) return ts;
+  return String(ts).replace(/[.,]\d{1,3}$/, '');
+}
 
-          const tdTimestamp = document.createElement('td');
-          tdTimestamp.textContent = log.timestamp || '-';
-          tr.appendChild(tdTimestamp);
+function createTextCell(text) {
+  const td = document.createElement('td');
+  td.textContent = text ?? '-';
+  return td;
+}
 
-          const tdName = document.createElement('td');
-          tdName.textContent = log.name || '-';
-          tr.appendChild(tdName);
+function renderExtra(extra) {
+  const td = document.createElement('td');
 
-          const tdLevel = document.createElement('td');
-          tdLevel.textContent = log.level || '-';
-          tr.appendChild(tdLevel);
+  if (extra === null || extra === undefined) {
+    td.textContent = '-';
+    return td;
+  }
 
-          const tdFile = document.createElement('td');
-          tdFile.textContent = log.file || '-';
-          tr.appendChild(tdFile);
+  let parsed = extra;
+  if (typeof extra === 'string') {
+    try {
+      parsed = JSON.parse(extra);
+    } catch (e) {
+      td.textContent = extra;
+      td.title = extra;
+      return td;
+    }
+  }
 
-          const tdLine = document.createElement('td');
-          tdLine.textContent = log.line || '-';
-          tr.appendChild(tdLine);
+  if (typeof parsed !== 'object' || Array.isArray(parsed)) {
+    td.textContent = Array.isArray(parsed) ? JSON.stringify(parsed) : String(parsed);
+    td.title = JSON.stringify(parsed, null, 2);
+    return td;
+  }
 
-          const tdMessage = document.createElement('td');
-          tdMessage.textContent = log.message || '-';
-          tr.appendChild(tdMessage);
+  const table = document.createElement('table');
+  table.className = 'extra-table';
+  const tbody = document.createElement('tbody');
 
-          const tdExtra = document.createElement('td');
-          try {
-            if (log.extra === null || log.extra === undefined) {
-              tdExtra.textContent = '-';
-            } else if (typeof log.extra === 'string') {
-              try {
-                const parsed = JSON.parse(log.extra);
-                tdExtra.textContent = JSON.stringify(parsed);
-                tdExtra.title = JSON.stringify(parsed, null, 2);
-              } catch (e) {
-                tdExtra.textContent = log.extra;
-              }
-            } else {
-              tdExtra.textContent = JSON.stringify(log.extra);
-              tdExtra.title = JSON.stringify(log.extra, null, 2);
-            }
-          } catch (e) {
-            tdExtra.textContent = String(log.extra);
-          }
-          tr.appendChild(tdExtra);
+  Object.keys(parsed).forEach(key => {
+    const val = parsed[key];
+    const tr = document.createElement('tr');
 
-          tbody.appendChild(tr);
-        });
+    const tdKey = document.createElement('td');
+    tdKey.className = 'extra-key';
+    tdKey.textContent = key;
+    tr.appendChild(tdKey);
 
-      } catch (err) {
-        console.error('Ошибка при получении логов:', err);
-        alert('Не удалось получить логи (смотрите консоль).');
-      }
+    const tdVal = document.createElement('td');
+    tdVal.className = 'extra-value';
+
+    if ((/date|time|created|at|timestamp/i).test(key) && (typeof val === 'string')) {
+      tdVal.textContent = removeMillis(val);
+      tdVal.title = val;
+    } else if (typeof val === 'object' && val !== null) {
+      tdVal.textContent = JSON.stringify(val);
+      tdVal.title = JSON.stringify(val, null, 2);
+    } else {
+      tdVal.textContent = String(val);
+    }
+
+    tr.appendChild(tdVal);
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  td.appendChild(table);
+
+  td.title = JSON.stringify(parsed, null, 2);
+  return td;
+}
+
+logsBtn?.addEventListener('click', async () => {
+  const limitInput = document.getElementById('limitInput');
+  const limit = Number(limitInput?.value) || 10;
+
+  const url = `http://localhost/api/logs/logs?limit=${encodeURIComponent(limit)}`;
+
+  try {
+    const response = await fetch(url, { method: 'GET', headers: { 'accept': 'application/json' } });
+    if (!response.ok) throw new Error('Network response was not ok');
+    const logs = await response.json();
+
+    const tbody = document.querySelector('#logsTable tbody');
+    tbody.innerHTML = '';
+
+    const info = logs?.info;
+
+    if(!Array.isArray(info)) return;
+    info.forEach(log => {
+      const tr = document.createElement('tr');
+
+      const ts = removeMillis(log.timestamp);
+      tr.appendChild(createTextCell(ts));
+
+      tr.appendChild(createTextCell(log.name));
+      tr.appendChild(createTextCell(log.level));
+      tr.appendChild(createTextCell(log.file));
+      tr.appendChild(createTextCell(log.line));
+      tr.appendChild(createTextCell(log.message));
+
+      tr.appendChild(renderExtra(log.extra));
+
+      tbody.appendChild(tr);
     });
+
+  } catch (err) {
+    console.error('Ошибка при получении логов:', err);
+    alert('Не удалось получить логи (смотрите консоль).');
+  }
+});
 </script>
 
 </body>
