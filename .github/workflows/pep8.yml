@@ -29,4 +29,7 @@ jobs:
       - name: Run PEP8 checks
         run: |
           # Проверка всех .py файлов в проекте
-          flake8 .
+          # Исключаем venv,alembic
+          # Длинна строчки 120
+          flake8 . --exclude=venv,alembic --max-line-length=120
+
