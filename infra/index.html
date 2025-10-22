@@ -1,13 +1,127 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math & PLC Interface</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 50px 0;
+        }
+
+        .container {
+            max-width: 600px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .response-card {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease-in-out;
+        }
+
+        .response-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .response-card h5 {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+
+        #sendBtn {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <h1>FDFSDFSDFSDFSDF</h1>
+
+<div class="container">
+    <h1>Math Model & PLC</h1>
+
+    <div class="mb-3">
+        <label for="numberInput" class="form-label">Введите число:</label>
+        <input type="number" class="form-control" id="numberInput" placeholder="Например, 4">
+    </div>
+    <button id="sendBtn" class="btn btn-primary">Отправить</button>
+
+    <div class="response-card mt-4" id="mathCard">
+        <h5>Math Model:</h5>
+        <div class="result-value" id="mathResult">–</div>
+    </div>
+
+    <div class="response-card mt-3" id="plcCard">
+        <h5>PLC:</h5>
+        <div class="result-value" id="plcResult">–</div>
+    </div>
+</div>
+
+<script>
+    const sendBtn = document.getElementById('sendBtn');
+    const numberInput = document.getElementById('numberInput');
+    const mathCard = document.getElementById('mathCard');
+    const plcCard = document.getElementById('plcCard');
+    const mathResult = document.getElementById('mathResult');
+    const plcResult = document.getElementById('plcResult');
+
+    sendBtn.addEventListener('click', async () => {
+        const number = numberInput.value;
+        if (!number) {
+            alert('Введите число!');
+            return;
+        }
+
+        mathResult.textContent = "…";
+        plcResult.textContent = "…";
+
+        mathCard.classList.remove('show');
+        plcCard.classList.remove('show');
+
+        try {
+            const response = await fetch('http://localhost/api/representation/get_number_in_math_model', {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'number': number
+                }
+            });
+            const data = await response.json();
+
+            // Обновляем блоки
+            mathResult.textContent = data.model_answer;
+            plcResult.textContent = data.plc_answer;
+
+            mathCard.classList.add('show');
+            plcCard.classList.add('show');
+
+        } catch (err) {
+            mathResult.textContent = "Ошибка!";
+            plcResult.textContent = "Ошибка!";
+            mathCard.classList.add('show');
+            plcCard.classList.add('show');
+        }
+    });
+</script>
+
 </body>
 </html>

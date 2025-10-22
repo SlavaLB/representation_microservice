@@ -10,7 +10,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "80:80"  # Стандартный HTTP порт
+      - "80:80"
 
   backend:
     build: ./backend
