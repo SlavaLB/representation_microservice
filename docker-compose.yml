@@ -7,6 +7,7 @@ services:
     build:
       context: ./infra
       dockerfile: Dockerfile
+    image: gateway:0.2
     depends_on:
       - backend
     ports:
@@ -14,6 +15,7 @@ services:
 
   backend:
     build: ./backend
+    image: backend:0.1
     container_name: backend
     restart: always
     ports:
@@ -24,6 +26,7 @@ services:
 
   math_model:
     build: ./math_model
+    image: math_model:0.1
     container_name: math_model
     restart: always
     ports:
@@ -31,6 +34,7 @@ services:
 
   plc_service:
     build: ./PLCservice
+    image: plc_service:0.1
     container_name: plc_service
     restart: always
     ports:
