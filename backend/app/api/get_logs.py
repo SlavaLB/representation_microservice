@@ -21,7 +21,7 @@ async def get_logs(limit: int = 100, level: str = None):
         for log_level in levels:
             logs = log_parser.parse_log_file(log_level)
             # Ограничиваем количество записей и переворачиваем порядок (новые сверху)
-            result[log_level] = logs[-limit:][::-1]
+            result[log_level] = logs[-limit:]# [::-1]
 
         return JSONResponse(content=result)
 
