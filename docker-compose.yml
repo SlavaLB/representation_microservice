@@ -7,7 +7,7 @@ services:
     build:
       context: ./infra
       dockerfile: Dockerfile
-    image: gateway:0.2
+    image: gateway:0.1
     depends_on:
       - backend
     ports:
